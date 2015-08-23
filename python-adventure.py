@@ -6,7 +6,7 @@ player_name = raw_input("What's your name? ")
 
 saved_data = {"player name" : player_name}
 
-game_data = {"one-room house" : {"description" : "You're name is {{player name}}. You're in a darkly lit one-room house. Its raining outside. You can hear the drops hit the ceiling and can see rain hit the window when lightning strikes in the distance, which it often does. The window is above a sink full of dirty dishes. On the oven beside the sink there is a pot full of boiling water. To your left there is a couch facing a television. It's turned to a channel that only gets static. Amazingly there's a penguin sitting on the couch. The penguin turns to face you when you look at it. Behind you is a pile of smelly blankets and an old set of golf clubs.",
+game_data = {"one-room house" : {"description" : "Your name is {{player name}}. You're in a darkly lit one-room house. Its raining outside. You can hear the drops hit the ceiling and can see rain hit the window when lightning strikes in the distance, which it often does. The window is above a sink full of dirty dishes. On the oven beside the sink there is a pot full of boiling water. To your left there is a couch facing a television. It's turned to a channel that only gets static. Amazingly there's a penguin sitting on the couch. The penguin turns to face you when you look at it. Behind you is a pile of smelly blankets and an old set of golf clubs.",
                                   "choices" : [{"input" : "t",
                                                "description" : "Talk to the penguin",
                                                "destination" : "penguin conversation"},
