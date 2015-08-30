@@ -1,11 +1,29 @@
 import re
 
-#file types should be .game and .saved_game?
+#TODO should grab this from a .save file
+saved_data = {}
 
-player_name = raw_input("What's your name? ")
+def name_entity(saved_data, options):
+    saved_data[options['label']] = raw_input(options['prompt'] + " ")
 
-saved_data = {"player name" : player_name}
+# TODO maybe this should say something like {{player name}} got a {{item}}! or got another {{item}}!
+# TODO I'll need a way for the environment to keep track of how many items there are
+#      this function will probably have to account for that.
+def add_to_inventory(saved_data, options):
+    if options['item'] in saved_data['inventory']:
+        saved_data['inventory'][options['item']] += 1
+    else:
+        saved_data['inventory'][options['item']] = 1
 
+actions = {'name_entity' : name_entity, 'add_to_inventory' : add_to_inventory}
+
+actions['name_entity'](saved_data, {"prompt" : "What's your name?", "label" : "player name"})
+
+#TODO make choice have an optional action, if there is an action, call one of the actions functions.
+#     Then you won't need this call to name_entity up here, you start with a 'room' that introduces
+#     the game and then goes to the one-room-house
+
+#TODO should grab this from a .game file
 game_data = {"one-room house" : {"description" : "Your name is {{player name}}. You're in a darkly lit one-room house. Its raining outside. You can hear the drops hit the ceiling and can see rain hit the window when lightning strikes in the distance, which it often does. The window is above a sink full of dirty dishes. On the oven beside the sink there is a pot full of boiling water. To your left there is a couch facing a television. It's turned to a channel that only gets static. Amazingly there's a penguin sitting on the couch. The penguin turns to face you when you look at it. Behind you is a pile of smelly blankets and an old set of golf clubs.",
                                   "choices" : [{"input" : "t",
                                                "description" : "Talk to the penguin",
@@ -47,16 +65,14 @@ def add_saved_data(string):
     else:
         return string
 
+#TODO .game file should tell us this
 current_room = game_data["one-room house"]
 
 player_input = ""
 while player_input != "q":
     print "\n" + add_saved_data(current_room["description"]) + "\n"
 
-    #if "actions" in current_room:
-    #    perform_actions(current_room["actions"])
-    #make this a dictionary of functions, naming a character is one, battle is another
-
+    #TODO game data should be able to specify a set of default choices you usually always have.
     for choice in current_room["choices"]:
         print choice["input"] + ") " + add_saved_data(choice["description"])
     print "q) quit game\n"
