@@ -1,7 +1,5 @@
 import re
 import json
-import pprint
-pp = pprint.PrettyPrinter(indent=4)
 
 #TODO should grab this from a .save file
 saved_data = {}
