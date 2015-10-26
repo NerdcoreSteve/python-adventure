@@ -1,5 +1,7 @@
 import re
 import json
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 #TODO should grab this from a .save file
 saved_data = {}
@@ -60,6 +62,8 @@ while player_input != "q":
 
         for choice in current_room["choices"]:
             if player_input == choice["input"]:
+                if "action" in choice and choice["action"]["name"] in actions:
+                    actions[choice["action"]["name"]](saved_data, choice["action"]["options"])
                 current_room = game_data[choice["destination"]]
                 valid_choice = True
 
