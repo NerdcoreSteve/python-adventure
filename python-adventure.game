@@ -30,6 +30,18 @@
                                 "input": "l",
                                 "description": "Look around the room again",
                                 "destination": "one-room house"
+                            },
+                            {
+                                "input": "o",
+                                "description": "Go outside the house",
+                                "destination": "outside sans weapon",
+                                "condition": "!weapon"
+                            },
+                            {
+                                "input": "g",
+                                "description": "Now that you have a weapon, go outside the house",
+                                "destination": "outside with weapon",
+                                "condition": "weapon"
                             }
                         ]
                 },
@@ -93,6 +105,35 @@
                                                 "label": "The Penguin"
                                             }
                                     }
+                            }
+                        ]
+                },
+            "outside sans weapon":
+                {
+                    "description": "\"Don't go out there without some kind of weapon!\" {{The Penguin}} says. \"It's dangerous out there!\"",
+                    "choices":
+                        [
+                            {
+                                "input": "t",
+                                "description": "Talk to {{The Penguin}}",
+                                "destination": "penguin conversation"
+                            },
+                            {
+                                "input": "l",
+                                "description": "Look around the room again",
+                                "destination": "one-room house"
+                            }
+                        ]
+                },
+            "outside with weapon":
+                {
+                    "description": "It's all cold and rainy out here!",
+                    "choices":
+                        [
+                            {
+                                "input": "i",
+                                "description": "Go back inside",
+                                "destination": "one-room house"
                             }
                         ]
                 }
