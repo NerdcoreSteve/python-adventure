@@ -25,6 +25,12 @@ def add_saved_data(saved_data, string):
     else:
         return string
 
+def test_condition(saved_data, condition):
+    if (re.search('!', condition)):
+        return condition not in saved_data
+    else:
+        return condition in saved_data
+
 def apply_conditions(saved_data, string):
     conditional_statement = "\(\((.*?) \? (.*?) \| (.*?)\)\)"
     matches = re.search(conditional_statement, string)
@@ -49,23 +55,29 @@ def apply_conditions(saved_data, string):
 def process_string(saved_data, string):
     return apply_conditions(saved_data, add_saved_data(saved_data, string))
 
+def filter_choices(saved_data, choices):
+    def apply_choice_condition(choice):
+        if ('condition' in choice):
+            return test_condition(saved_data, choice['condition'])
+        else:
+            return True
+    return filter(apply_choice_condition, choices)
+
 #TODO should grab this from a .save file
 saved_data = {}
 
-actions['name_entity'](saved_data, {"prompt" : "What's your name?", "label" : "player name"})
-
-with open('python-adventure.game') as game_file:    
+with open('python-adventure.game') as game_file:
     game_data = json.load(game_file)
 
 scenes = game_data['scenes']
 
-current_room = scenes["one-room house"]
+current_room = scenes[game_data['scenes']['first scene name']]
 
 player_input = ""
 while player_input != "q":
     print "\n" + process_string(saved_data, current_room["description"]) + "\n"
 
-    for choice in current_room["choices"]:
+    for choice in filter_choices(saved_data, current_room["choices"]):
         print choice["input"] + ") " + process_string(saved_data, choice["description"])
     print "q) quit game\n"
 
@@ -76,7 +88,7 @@ while player_input != "q":
     else:
         valid_choice = False
 
-        for choice in current_room["choices"]:
+        for choice in filter_choices(saved_data, current_room["choices"]):
             if player_input == choice["input"]:
                 if "action" in choice and choice["action"]["name"] in actions:
                     actions[choice["action"]["name"]](saved_data, choice["action"]["options"])
