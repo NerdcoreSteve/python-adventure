@@ -18,12 +18,12 @@
         {
             "one-room house":
                 {
-                    "description": "Your name is {{player name}}. You're in a darkly lit one-room house. Its raining outside. You can hear the drops hit the ceiling and can see rain hit the window when lightning strikes in the distance, which it often does. The window is above a sink full of dirty dishes. On the oven beside the sink there is a pot full of boiling water. To your left there is a couch facing a television. It's turned to a channel that only gets static. ((the penguin ? {{the penguin}} is watching the TV showing every sign of enjoyment. | Amazingly there's a penguin sitting on the couch. The penguin turns to face you when you look at it.)) Behind you is a pile of smelly blankets and and old set of golf clubs.",
+                    "description": "Your name is {{player name}}. You're in a darkly lit one-room house. Its raining outside. You can hear the drops hit the ceiling and can see rain hit the window when lightning strikes in the distance, which it often does. The window is above a sink full of dirty dishes. On the oven beside the sink there is a pot full of boiling water. To your left there is a couch facing a television. It's turned to a channel that only gets static. ((The Penguin ? {{The Penguin}} is watching the TV, showing every sign of enjoyment. | Amazingly there's a penguin sitting on the couch. {{The Penguin}} turns to face you when you look at it.)) Behind you is a pile of smelly blankets and and old set of golf clubs.",
                     "choices":
                         [
                             {
                                 "input": "t",
-                                "description": "Talk to {{the penguin}}",
+                                "description": "Talk to {{The Penguin}}",
                                 "destination": "penguin conversation"
                             },
                             {
@@ -36,7 +36,7 @@
             "penguin conversation":
                 {
                     "description":
-                        "You say, \"Hello penguin.\"\n\n\"Hello {{player name}},\" replies {{the penguin}}.",
+                        "You say, \"Hello penguin.\"\n\n\"Hello {{player name}},\" replies {{The Penguin}}.",
                     "choices":
                         [
                             {
@@ -46,12 +46,12 @@
                             },
                             {
                                 "input": "a",
-                                "description": "Ask {{the penguin}} what's going on.",
+                                "description": "Ask {{The Penguin}} what's going on.",
                                 "destination": "penguin says what's up"
                             },
                             {
                                 "input": "n",
-                                "description": "Ask {{the penguin}} their name.",
+                                "description": "Ask {{The Penguin}} their name.",
                                 "destination": "ask penguin for name"
                             }
                         ]
@@ -59,7 +59,7 @@
             "penguin says what's up":
                 {
                     "description":
-                        "You say, \"What's going on?\"\n\n\"I heard a loud bang outside. I think someone's out there.\" replies {{the penguin}}.\n\nJust then, you hear a loud noise. Some thing or some one just hit the wall with a loud thud.",
+                        "You say, \"What's going on?\"\n\n\"I heard a loud bang outside. I think someone's out there.\" replies {{The Penguin}}.\n\nJust then, you hear a loud noise. Some thing or some one just hit the wall with a loud thud.",
                     "choices":
                         [
                             {
@@ -69,7 +69,7 @@
                             },
                             {
                                 "input": "n",
-                                "description": "Ask {{the penguin}} their name.",
+                                "description": "Ask {{The Penguin}} their name.",
                                 "destination": "ask penguin for name"
                             }
                         ]
@@ -77,20 +77,20 @@
             "ask penguin for name":
                 {
                     "description":
-                        "You say, \"What's your name?\"\n\nThe penguin says, \"You remember it's...\"",
+                        "You say, \"What's your name?\"\n\n{{The Penguin}} says, \"You remember it's...\"",
                     "choices":
                         [
                             {
                                 "input" : "n",
-                                "description" : "name {{the penguin}}",
+                                "description" : "name {{The Penguin}}",
                                 "destination" : "one-room house",
                                 "action":
                                     {
                                         "name": "name_entity",
                                         "options":
                                             {
-                                                "prompt": "What's the penguin's name?",
-                                                "label": "the penguin"
+                                                "prompt": "What's The Penguin's name?",
+                                                "label": "The Penguin"
                                             }
                                     }
                             }

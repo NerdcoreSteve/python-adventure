@@ -46,6 +46,9 @@ def apply_conditions(saved_data, string):
     else:
         return string
 
+def process_string(saved_data, string):
+    return apply_conditions(saved_data, add_saved_data(saved_data, string))
+
 #TODO should grab this from a .save file
 saved_data = {}
 
@@ -60,10 +63,10 @@ current_room = scenes["one-room house"]
 
 player_input = ""
 while player_input != "q":
-    print "\n" + apply_conditions(saved_data, add_saved_data(saved_data, current_room["description"])) + "\n"
+    print "\n" + process_string(saved_data, current_room["description"]) + "\n"
 
     for choice in current_room["choices"]:
-        print choice["input"] + ") " + add_saved_data(saved_data, choice["description"])
+        print choice["input"] + ") " + process_string(saved_data, choice["description"])
     print "q) quit game\n"
 
     player_input = raw_input("What will you do? ")
