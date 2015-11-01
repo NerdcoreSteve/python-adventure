@@ -10,30 +10,41 @@ def add_to_inventory(saved_data, options):
     else:
         saved_data['inventory'][options['item']] = 1
 
+actions = {'name_entity' : name_entity, 'add_to_inventory' : add_to_inventory}
+
 def add_saved_data(saved_data, string):
     matches = re.search("\{\{(.*?)\}\}", string)
     if(matches):
         default = matches.group(1)
         return add_saved_data(
-                saved_data,
-                re.sub(
-                    matches.group(0),
-                    saved_data[default] if default in saved_data else default,
-                    string))
+            saved_data,
+            re.sub(
+                matches.group(0),
+                saved_data[default] if default in saved_data else default,
+                string))
     else:
         return string
 
 def apply_conditions(saved_data, string):
-    matches = re.search("\(\((.*?) \? (.*?) \| (.*?)\)\)", string)
-    #if(matches):
-        #print matches.group(1)
-        #print matches.group(2)
-        #print matches.group(3)
-    #else:
-        #print "no matches!"
-    return string
+    conditional_statement = "\(\((.*?) \? (.*?) \| (.*?)\)\)"
+    matches = re.search(conditional_statement, string)
 
-actions = {'name_entity' : name_entity, 'add_to_inventory' : add_to_inventory}
+    if(matches):
+        conditional_test = matches.group(1)
+        if_true_string = matches.group(2)
+        if_false_string = matches.group(3)
+
+        replacement_substring = ''
+        if conditional_test in saved_data:
+            replacement_substring = if_true_string
+        else:
+            replacement_substring = if_false_string
+
+        return apply_conditions(
+            saved_data,
+            re.sub(conditional_statement, replacement_substring, string))
+    else:
+        return string
 
 #TODO should grab this from a .save file
 saved_data = {}

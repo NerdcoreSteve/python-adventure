@@ -18,7 +18,7 @@
         {
             "one-room house":
                 {
-                    "description": "Your name is {{player name}}. You're in a darkly lit one-room house. Its raining outside. You can hear the drops hit the ceiling and can see rain hit the window when lightning strikes in the distance, which it often does. The window is above a sink full of dirty dishes. On the oven beside the sink there is a pot full of boiling water. To your left there is a couch facing a television. It's turned to a channel that only gets static. ((penguin_name ? {{the penguin}} is watching the TV showing every sign of enjoyment | Amazingly there's a penguin sitting on the couch. The penguin turns to face you when you look at it.)) Behind you is a pile of smelly blankets and and old set of golf clubs.",
+                    "description": "Your name is {{player name}}. You're in a darkly lit one-room house. Its raining outside. You can hear the drops hit the ceiling and can see rain hit the window when lightning strikes in the distance, which it often does. The window is above a sink full of dirty dishes. On the oven beside the sink there is a pot full of boiling water. To your left there is a couch facing a television. It's turned to a channel that only gets static. ((the penguin ? {{the penguin}} is watching the TV showing every sign of enjoyment. | Amazingly there's a penguin sitting on the couch. The penguin turns to face you when you look at it.)) Behind you is a pile of smelly blankets and and old set of golf clubs.",
                     "choices":
                         [
                             {
