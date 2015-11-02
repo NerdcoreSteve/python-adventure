@@ -1,5 +1,6 @@
 import re
 import json
+import os
 
 def name_entity(saved_data, options):
     saved_data[options['label']] = raw_input(options['prompt'] + " ")
@@ -75,6 +76,8 @@ current_room = scenes[game_data['scenes']['first scene name']]
 
 player_input = ""
 while player_input != "q":
+    os.system('clear')
+
     print "\n" + process_string(saved_data, current_room["description"]) + "\n"
 
     for choice in filter_choices(saved_data, current_room["choices"]):

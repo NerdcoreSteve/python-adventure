@@ -1,0 +1,48 @@
+blog about the conditional choices you just implemented
+
+blog about map, filter, reduce
+
+Add the following modification and blog about it:
+game = create_game()
+
+while(!game['done']):
+    game = play_game(game)
+    
+rename saved_data to player_data
+
+make no destructive updates player_data = some_func(player_data)
+
+(use maps instead of for loops to build prompts?)
+explain that now the only place where data gets mutated is in the while loop and why that's good.
+
+Maybe have a display state sub-dict an a render function?
+
+Can I do model-view-update?
+
+quitting should go to a quit scene, or maybe there should just be a quit function that the game data invokes?
+
+Custom message for invalid choices
+
+add items to inventory
+
+equip-able items
+
+test for weapon
+
+battle!
+
+other uses for items
+
+tools for building games
+
+psychic powers (just like force powers)
+
+hacking
+
+magic (entirely different system)
+
+special moves
+
+ship combat!
+
+break scenes up into locations?
