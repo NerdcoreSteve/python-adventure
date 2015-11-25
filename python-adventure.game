@@ -19,7 +19,7 @@
             "first scene name": "intro",
             "intro":
                 {
-                    "description": "Welcome to the game! Please give yourself a name!",
+                    "description": "Welcome to the game! You can either quit, or choose to give yourself a name.",
                     "choices":
                         [
                             {
