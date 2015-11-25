@@ -27,8 +27,8 @@ def add_saved_data(saved_data, string):
         return string
 
 def test_condition(saved_data, condition):
-    if (re.search('!', condition)):
-        return condition not in saved_data
+    if (re.search('^!', condition)):
+        return condition[1:] not in saved_data
     else:
         return condition in saved_data
 
