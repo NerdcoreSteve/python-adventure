@@ -1,4 +1,10 @@
 {
+    "display": {
+        "invalid_choice": "I dunno what you're saying dood.",
+        "quit_message": "See ya later!",
+        "prompt": "Whatchoo gonna do?",
+        "inventory_empty": "Nothin' in your inventory. :P"
+    },
     "initial_player_data":
         {
             "attack": 2,
@@ -29,7 +35,7 @@
                         [
                             {
                                 "input": "n",
-                                "description": "What's your name?",
+                                "description": "Name yourself",
                                 "destination": "one-room house",
                                 "action":
                                     {
@@ -78,6 +84,16 @@
                                     {
                                         "name": "add_to_inventory",
                                         "options": {"item": "golf club"}
+                                    }
+                            },
+                            {
+                                "input": "v",
+                                "description": "view inventory",
+                                "destination": "one-room house",
+                                "action":
+                                    {
+                                        "name": "view_inventory",
+                                        "options": {}
                                     }
                             }
                         ]

@@ -4,39 +4,59 @@ import os
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-def name_entity(saved_data, options):
-    saved_data[options['label']] = raw_input(options['prompt'] + " ")
+###Actions
+def name_entity(player_data, game_data, options):
+    player_data[options["label"]] = raw_input(options["prompt"] + " ")
 
-def add_to_inventory(saved_data, options):
-    if 'inventory' not in saved_data:
-        saved_data['inventory'] = {}
-    if options['item'] not in saved_data['inventory']:
-        saved_data['inventory'][options['item']] = 1
+def add_to_inventory(player_data, game_data, options):
+    if "inventory" not in player_data:
+        player_data["inventory"] = {}
+    if options["item"] not in player_data["inventory"]:
+        player_data["inventory"][options["item"]] = 1
     else:
-        saved_data['inventory'][options['item']] += 1
+        player_data["inventory"][options["item"]] += 1
+    print options["item"] + " added to inventory!\n"
 
-actions = {'name_entity' : name_entity, 'add_to_inventory' : add_to_inventory}
+    print "press enter/return \n"
+    raw_input()
 
-def add_saved_data(saved_data, string):
+def view_inventory(player_data, game_data, options):
+    if "inventory" in player_data and len(player_data["inventory"].keys()):
+        for item in player_data["inventory"].items():
+            print str(item[0]) + " x " + str(item[1]) + "\n"
+    else:
+        print game_data["display"]["inventory_empty"] + "\n"
+        print "press enter/return \n"
+
+    raw_input()
+
+actions = {
+    "name_entity" : name_entity,
+    "add_to_inventory" : add_to_inventory,
+    "view_inventory": view_inventory
+}
+### end of actions
+
+def add_player_data(player_data, string):
     matches = re.search("\{\{(.*?)\}\}", string)
     if(matches):
         default = matches.group(1)
-        return add_saved_data(
-            saved_data,
+        return add_player_data(
+            player_data,
             re.sub(
                 matches.group(0),
-                saved_data[default] if default in saved_data else default,
+                player_data[default] if default in player_data else default,
                 string))
     else:
         return string
 
-def test_condition(saved_data, condition):
-    if (re.search('^!', condition)):
-        return condition[1:] not in saved_data
+def test_condition(player_data, condition):
+    if (re.search("^!", condition)):
+        return condition[1:] not in player_data
     else:
-        return condition in saved_data
+        return condition in player_data
 
-def apply_conditions(saved_data, string):
+def apply_conditions(player_data, string):
     conditional_statement = "\(\((.*?) \? (.*?) \| (.*?)\)\)"
     matches = re.search(conditional_statement, string)
 
@@ -45,66 +65,67 @@ def apply_conditions(saved_data, string):
         if_true_string = matches.group(2)
         if_false_string = matches.group(3)
 
-        replacement_substring = ''
-        if conditional_test in saved_data:
+        replacement_substring = ""
+        if conditional_test in player_data:
             replacement_substring = if_true_string
         else:
             replacement_substring = if_false_string
 
         return apply_conditions(
-            saved_data,
+            player_data,
             re.sub(conditional_statement, replacement_substring, string))
     else:
         return string
 
-def process_string(saved_data, string):
-    return apply_conditions(saved_data, add_saved_data(saved_data, string))
+def process_string(player_data, string):
+    return apply_conditions(player_data, add_player_data(player_data, string))
 
-def filter_choices(saved_data, choices):
+def filter_choices(player_data, choices):
     def apply_choice_condition(choice):
-        if ('condition' in choice):
-            return test_condition(saved_data, choice['condition'])
+        if ("condition" in choice):
+            return test_condition(player_data, choice["condition"])
         else:
             return True
     return filter(apply_choice_condition, choices)
 
-def process_player_input(player_input, saved_data, game_data):
+def process_player_input(player_input, player_data, game_data):
     if player_input == "q":
-        print "Hope you had fun!"
-        return False
+        print "\n" + game_data["display"]["quit_message"]
+        player_data["quitting"] = True
     else:
-        valid_choice = False
-
-        for choice in filter_choices(saved_data, saved_data["current_room"]["choices"]):
+        player_data["last_choice_was_valid"] = False
+        for choice in filter_choices(player_data, player_data["current_room"]["choices"]):
             if player_input == choice["input"]:
                 if "action" in choice and choice["action"]["name"] in actions:
-                    actions[choice["action"]["name"]](saved_data, choice["action"]["options"])
-                saved_data["current_room"] = game_data['scenes'][choice["destination"]]
-                valid_choice = True
+                    os.system("clear")
+                    actions[choice["action"]["name"]](player_data, game_data, choice["action"]["options"])
+                player_data["current_room"] = game_data["scenes"][choice["destination"]]
+                player_data["last_choice_was_valid"] = True
 
-        if not valid_choice:
-            print "I have no idea what you're talking about."
-    return True
+def display(player_data, game_data):
+    print "\n" + process_string(player_data, player_data["current_room"]["description"]) + "\n"
 
-def display(saved_data, game_data):
-    print "\n" + process_string(saved_data, saved_data["current_room"]["description"]) + "\n"
-
-    for choice in filter_choices(saved_data, saved_data["current_room"]["choices"]):
-        print choice["input"] + ") " + process_string(saved_data, choice["description"])
+    for choice in filter_choices(player_data, player_data["current_room"]["choices"]):
+        print choice["input"] + ") " + process_string(player_data, choice["description"])
 
     print "q) quit game\n"
 
-def game_loop(saved_data, game_data):
-    os.system('clear')
+    if player_data.get("last_choice_was_valid"):
+        print game_data["display"]["invalid_choice"]
 
-    if "current_room" not in saved_data:
-        saved_data["current_room"] = game_data['scenes'][game_data['scenes']['first scene name']]
+def game_loop(player_data, game_data):
+    os.system("clear")
 
-    display(saved_data, game_data)
+    if "current_room" not in player_data:
+        player_data["current_room"] = game_data["scenes"][game_data["scenes"]["first scene name"]]
 
-    return process_player_input(raw_input("What will you do? "), saved_data, game_data)
+    display(player_data, game_data)
 
-with open('python-adventure.game') as game_file:
+    process_player_input(raw_input(game_data["display"]["prompt"] + " "), player_data, game_data)
+
+    return not player_data.get("quitting")
+
+with open("python-adventure.game") as game_file:
     game_data = json.load(game_file)
-    saved_data = {}
-    while game_loop(saved_data, game_data): pass
+    player_data = {}
+    while game_loop(player_data, game_data): pass

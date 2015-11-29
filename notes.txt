@@ -1,6 +1,25 @@
-blog about the conditional choices you just implemented
+bug: "I don't know what you're saying" message doesn't always come up
 
-blog about map, filter, reduce
+default choices, destination can be blank (if it is you stay in the same place)
+    default choices are listed in .game file
+    the default choice to quit is always there
+
+process_player_input always returns an action, which is then returned by a game loop. mutation only occurs in actions?
+    one of the actions is the standard (display choices and ask for input) action
+
+input should be isolated in one place? That way it can be replaced by function calls?
+
+Look into using tail-callers
+http://kylem.net/programming/tailcall.html
+http://code.activestate.com/recipes/474088-tail-call-optimization-decorator/
+https://tomforb.es/adding-tail-call-optimization-to-python
+http://neopythonic.blogspot.com/2009/04/final-words-on-tail-calls.html
+try to find more?
+
+top one looks coolest
+https://github.com/tobgu/pyrsistent
+https://pythonhosted.org/pysistence/
+https://www.theguardian.com/info/developer-blog/2014/oct/21/immutable-data-structures-in-python
 
 Add the following modification and blog about it:
 game = create_game()
@@ -8,22 +27,11 @@ game = create_game()
 while(!game['done']):
     game = play_game(game)
     
-rename saved_data to player_data
-
 make no destructive updates player_data = some_func(player_data)
-
-(use maps instead of for loops to build prompts?)
-explain that now the only place where data gets mutated is in the while loop and why that's good.
-
-Maybe have a display state sub-dict an a render function?
 
 Can I do model-view-update?
 
 quitting should go to a quit scene, or maybe there should just be a quit function that the game data invokes?
-
-Custom message for invalid choices
-
-add items to inventory
 
 equip-able items
 
