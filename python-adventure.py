@@ -1,15 +1,19 @@
 import re
 import json
 import os
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 def name_entity(saved_data, options):
     saved_data[options['label']] = raw_input(options['prompt'] + " ")
 
 def add_to_inventory(saved_data, options):
-    if options['item'] in saved_data['inventory']:
-        saved_data['inventory'][options['item']] += 1
-    else:
+    if 'inventory' not in saved_data:
+        saved_data['inventory'] = {}
+    if options['item'] not in saved_data['inventory']:
         saved_data['inventory'][options['item']] = 1
+    else:
+        saved_data['inventory'][options['item']] += 1
 
 actions = {'name_entity' : name_entity, 'add_to_inventory' : add_to_inventory}
 
@@ -64,39 +68,43 @@ def filter_choices(saved_data, choices):
             return True
     return filter(apply_choice_condition, choices)
 
-#TODO should grab this from a .save file
-saved_data = {}
-
-with open('python-adventure.game') as game_file:
-    game_data = json.load(game_file)
-
-scenes = game_data['scenes']
-
-current_room = scenes[game_data['scenes']['first scene name']]
-
-player_input = ""
-while player_input != "q":
-    os.system('clear')
-
-    print "\n" + process_string(saved_data, current_room["description"]) + "\n"
-
-    for choice in filter_choices(saved_data, current_room["choices"]):
-        print choice["input"] + ") " + process_string(saved_data, choice["description"])
-    print "q) quit game\n"
-
-    player_input = raw_input("What will you do? ")
-
+def process_player_input(player_input, saved_data, game_data):
     if player_input == "q":
         print "Hope you had fun!"
+        return False
     else:
         valid_choice = False
 
-        for choice in filter_choices(saved_data, current_room["choices"]):
+        for choice in filter_choices(saved_data, saved_data["current_room"]["choices"]):
             if player_input == choice["input"]:
                 if "action" in choice and choice["action"]["name"] in actions:
                     actions[choice["action"]["name"]](saved_data, choice["action"]["options"])
-                current_room = scenes[choice["destination"]]
+                saved_data["current_room"] = game_data['scenes'][choice["destination"]]
                 valid_choice = True
 
         if not valid_choice:
             print "I have no idea what you're talking about."
+    return True
+
+def display(saved_data, game_data):
+    print "\n" + process_string(saved_data, saved_data["current_room"]["description"]) + "\n"
+
+    for choice in filter_choices(saved_data, saved_data["current_room"]["choices"]):
+        print choice["input"] + ") " + process_string(saved_data, choice["description"])
+
+    print "q) quit game\n"
+
+def game_loop(saved_data, game_data):
+    os.system('clear')
+
+    if "current_room" not in saved_data:
+        saved_data["current_room"] = game_data['scenes'][game_data['scenes']['first scene name']]
+
+    display(saved_data, game_data)
+
+    return process_player_input(raw_input("What will you do? "), saved_data, game_data)
+
+with open('python-adventure.game') as game_file:
+    game_data = json.load(game_file)
+    saved_data = {}
+    while game_loop(saved_data, game_data): pass

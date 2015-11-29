@@ -14,6 +14,11 @@
                     "max_hp": 5
                 }
         },
+    "items": {
+        "golf club": {
+            "type": "weapon"
+        }
+    },
     "scenes":
         {
             "first scene name": "intro",
@@ -64,6 +69,16 @@
                                 "description": "Now that you have a weapon, go outside the house",
                                 "destination": "outside with weapon",
                                 "condition": "weapon"
+                            },
+                            {
+                                "input": "c",
+                                "description": "Grab golf club",
+                                "destination": "one-room house",
+                                "action":
+                                    {
+                                        "name": "add_to_inventory",
+                                        "options": {"item": "golf club"}
+                                    }
                             }
                         ]
                 },
