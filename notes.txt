@@ -3,18 +3,19 @@ bug: "I don't know what you're saying" message doesn't always come up
 default choices, destination can be blank (if it is you stay in the same place)
     default choices are listed in .game file
     the default choice to quit is always there
+    blog about how you did it
+
+equipment (armor, weapons, etc)
+    condition code should also allow you to check player_data to any depth
+
+battle action
+
+Should I consider standard actions like "talk", "get", etc? Then the player can type "grab penguin", "talk to golf club"?
 
 process_player_input always returns an action, which is then returned by a game loop. mutation only occurs in actions?
     one of the actions is the standard (display choices and ask for input) action
 
 input should be isolated in one place? That way it can be replaced by function calls?
-
-Look into using tail-callers
-http://kylem.net/programming/tailcall.html
-http://code.activestate.com/recipes/474088-tail-call-optimization-decorator/
-https://tomforb.es/adding-tail-call-optimization-to-python
-http://neopythonic.blogspot.com/2009/04/final-words-on-tail-calls.html
-try to find more?
 
 top one looks coolest
 https://github.com/tobgu/pyrsistent
@@ -29,15 +30,16 @@ while(!game['done']):
     
 make no destructive updates player_data = some_func(player_data)
 
+Look into using tail-callers
+http://kylem.net/programming/tailcall.html
+http://code.activestate.com/recipes/474088-tail-call-optimization-decorator/
+https://tomforb.es/adding-tail-call-optimization-to-python
+http://neopythonic.blogspot.com/2009/04/final-words-on-tail-calls.html
+try to find more?
+
 Can I do model-view-update?
 
 quitting should go to a quit scene, or maybe there should just be a quit function that the game data invokes?
-
-equip-able items
-
-test for weapon
-
-battle!
 
 other uses for items
 

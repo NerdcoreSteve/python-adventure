@@ -26,8 +26,8 @@ def view_inventory(player_data, game_data, options):
             print str(item[0]) + " x " + str(item[1]) + "\n"
     else:
         print game_data["display"]["inventory_empty"] + "\n"
-        print "press enter/return \n"
 
+    print "press enter/return \n"
     raw_input()
 
 actions = {
