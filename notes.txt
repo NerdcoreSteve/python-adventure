@@ -1,4 +1,21 @@
+finish making this game have a pure Elm architecture
+
 bug: "I don't know what you're saying" message doesn't always come up
+
+blog about architecture change
+
+use an immutable data library
+    top one looks coolest
+    https://github.com/tobgu/pyrsistent
+    https://pythonhosted.org/pysistence/
+    https://www.theguardian.com/info/developer-blog/2014/oct/21/immutable-data-structures-in-python
+
+use tail-caller for main game loop and other recursively called functions
+    http://kylem.net/programming/tailcall.html
+    http://code.activestate.com/recipes/474088-tail-call-optimization-decorator/
+    https://tomforb.es/adding-tail-call-optimization-to-python
+    http://neopythonic.blogspot.com/2009/04/final-words-on-tail-calls.html
+    try to find more?
 
 default choices, destination can be blank (if it is you stay in the same place)
     default choices are listed in .game file
@@ -17,11 +34,6 @@ process_player_input always returns an action, which is then returned by a game 
 
 input should be isolated in one place? That way it can be replaced by function calls?
 
-top one looks coolest
-https://github.com/tobgu/pyrsistent
-https://pythonhosted.org/pysistence/
-https://www.theguardian.com/info/developer-blog/2014/oct/21/immutable-data-structures-in-python
-
 Add the following modification and blog about it:
 game = create_game()
 
@@ -29,15 +41,6 @@ while(!game['done']):
     game = play_game(game)
     
 make no destructive updates player_data = some_func(player_data)
-
-Look into using tail-callers
-http://kylem.net/programming/tailcall.html
-http://code.activestate.com/recipes/474088-tail-call-optimization-decorator/
-https://tomforb.es/adding-tail-call-optimization-to-python
-http://neopythonic.blogspot.com/2009/04/final-words-on-tail-calls.html
-try to find more?
-
-Can I do model-view-update?
 
 quitting should go to a quit scene, or maybe there should just be a quit function that the game data invokes?
 

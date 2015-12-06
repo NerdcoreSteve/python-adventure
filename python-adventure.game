@@ -1,7 +1,7 @@
 {
-    "display": {
+    "messages": {
         "invalid_choice": "I dunno what you're saying dood.",
-        "quit_message": "See ya later!",
+        "quit": "See ya later!",
         "prompt": "Whatchoo gonna do?",
         "inventory_empty": "Nothin' in your inventory. :P"
     },

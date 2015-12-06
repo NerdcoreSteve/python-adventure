@@ -4,32 +4,43 @@ import os
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-###Actions
-def name_entity(player_data, game_data, options):
-    player_data[options["label"]] = raw_input(options["prompt"] + " ")
+#TODO should only pass functions parts of the model that they actually need
 
-def add_to_inventory(player_data, game_data, options):
-    if "inventory" not in player_data:
-        player_data["inventory"] = {}
-    if options["item"] not in player_data["inventory"]:
-        player_data["inventory"][options["item"]] = 1
+#TODO feels like actions should be in a separate module, which is kinda packaged
+#     with the game file. Maybe a base module loaded by all games too.
+#TODO actions should be a dict of dicts, each sub_dict has view and update functions
+#     maybe update looks to see what state it's in and calls the appropriate update function.
+#     same for view
+###Actions
+def name_entity(model, options):
+    #TODO should not be top level?
+    model["game"][options["label"]] = raw_input(options["prompt"] + " ")
+
+def add_to_inventory(model, options):
+    #TODO if statement should be in module's initialize function,
+    #     called by main game's initialize method
+    if "inventory" not in model["game"]:
+        model["game"]["inventory"] = {}
+    if options["item"] not in model["game"]["inventory"]:
+        model["game"]["inventory"][options["item"]] = 1
     else:
-        player_data["inventory"][options["item"]] += 1
+        model["game"]["inventory"][options["item"]] += 1
     print options["item"] + " added to inventory!\n"
 
     print "press enter/return \n"
     raw_input()
 
-def view_inventory(player_data, game_data, options):
-    if "inventory" in player_data and len(player_data["inventory"].keys()):
-        for item in player_data["inventory"].items():
+def view_inventory(model, options):
+    if "inventory" in model["game"] and len(model["game"]["inventory"].keys()):
+        for item in model["game"]["inventory"].items():
             print str(item[0]) + " x " + str(item[1]) + "\n"
     else:
-        print game_data["display"]["inventory_empty"] + "\n"
+        print model["game_data"]["messages"]["inventory_empty"] + "\n"
 
     print "press enter/return \n"
     raw_input()
 
+#TODO I'd like some way of automating this registering
 actions = {
     "name_entity" : name_entity,
     "add_to_inventory" : add_to_inventory,
@@ -37,26 +48,29 @@ actions = {
 }
 ### end of actions
 
-def add_player_data(player_data, string):
+#TODO tail-call optimize
+def replace_string_placeholders(model, string):
     matches = re.search("\{\{(.*?)\}\}", string)
     if(matches):
         default = matches.group(1)
-        return add_player_data(
-            player_data,
+        return replace_string_placeholders(
+            model,
             re.sub(
                 matches.group(0),
-                player_data[default] if default in player_data else default,
+                #TODO should not just be in top-level
+                model["game_data"][default] if default in model["game_data"] else default,
                 string))
     else:
         return string
 
-def test_condition(player_data, condition):
+def test_condition(model, condition):
     if (re.search("^!", condition)):
-        return condition[1:] not in player_data
+        return condition[1:] not in model["game"]
     else:
-        return condition in player_data
+        return condition in model["game"]
 
-def apply_conditions(player_data, string):
+#TODO tail-call optimize
+def apply_conditions(model, string):
     conditional_statement = "\(\((.*?) \? (.*?) \| (.*?)\)\)"
     matches = re.search(conditional_statement, string)
 
@@ -66,66 +80,80 @@ def apply_conditions(player_data, string):
         if_false_string = matches.group(3)
 
         replacement_substring = ""
-        if conditional_test in player_data:
+        #TODO should not be in top level
+        if conditional_test in model["game"]:
             replacement_substring = if_true_string
         else:
             replacement_substring = if_false_string
 
         return apply_conditions(
-            player_data,
+            model,
             re.sub(conditional_statement, replacement_substring, string))
     else:
         return string
 
-def process_string(player_data, string):
-    return apply_conditions(player_data, add_player_data(player_data, string))
+def process_string(model, string):
+    return apply_conditions(model, replace_string_placeholders(model, string))
 
-def filter_choices(player_data, choices):
+#TODO refactor using dictionary.get() ?
+def filter_choices(model, choices):
     def apply_choice_condition(choice):
         if ("condition" in choice):
-            return test_condition(player_data, choice["condition"])
+            return test_condition(model, choice["condition"])
         else:
             return True
     return filter(apply_choice_condition, choices)
 
-def process_player_input(player_input, player_data, game_data):
+def update(player_input, model):
     if player_input == "q":
-        print "\n" + game_data["display"]["quit_message"]
-        player_data["quitting"] = True
+        print "\n" + model["game_data"]["messages"]["quit"]
+        model["game"]["quitting"] = True
     else:
-        player_data["last_choice_was_valid"] = False
-        for choice in filter_choices(player_data, player_data["current_room"]["choices"]):
+        model["game"]["last_choice_was_valid"] = False
+        #TODO shouldn't save the whole room in model["game"]
+        #TODO filter_choices takes only model as argument? seems like it should be less
+        for choice in filter_choices(model, model["game"]["current_room"]["choices"]):
             if player_input == choice["input"]:
                 if "action" in choice and choice["action"]["name"] in actions:
+                    model["game"]["last_choice_was_valid"] = True
+                    #TODO there should be separate action functions for modification, and display
                     os.system("clear")
-                    actions[choice["action"]["name"]](player_data, game_data, choice["action"]["options"])
-                player_data["current_room"] = game_data["scenes"][choice["destination"]]
-                player_data["last_choice_was_valid"] = True
+                    actions[choice["action"]["name"]](
+                        model,
+                        choice["action"]["options"])
+                model["game"]["current_room"] = model["game_data"]["scenes"][choice["destination"]]
+    return model
 
-def display(player_data, game_data):
-    print "\n" + process_string(player_data, player_data["current_room"]["description"]) + "\n"
+def view(model):
+    os.system("clear")
 
-    for choice in filter_choices(player_data, player_data["current_room"]["choices"]):
-        print choice["input"] + ") " + process_string(player_data, choice["description"])
+    print "\n" + process_string(model, model["game"]["current_room"]["description"]) + "\n"
+
+    for choice in filter_choices(model, model["game"]["current_room"]["choices"]):
+        print choice["input"] + ") " + process_string(model, choice["description"])
 
     print "q) quit game\n"
 
-    if player_data.get("last_choice_was_valid"):
-        print game_data["display"]["invalid_choice"]
+    if model["game"].get("last_choice_was_valid"):
+        print model["game_data"]["messages"]["invalid_choice"]
 
-def game_loop(player_data, game_data):
-    os.system("clear")
+def player_input(model):
+    return raw_input(model["game_data"]["messages"]["prompt"] + " ")
 
-    if "current_room" not in player_data:
-        player_data["current_room"] = game_data["scenes"][game_data["scenes"]["first scene name"]]
+def initialize(game_data):
+    scenes = game_data["scenes"]
+    return {
+        "game_data": game_data,
+        "game": {
+            "current_room": scenes[scenes["first scene name"]]
+        }
+    }
 
-    display(player_data, game_data)
-
-    process_player_input(raw_input(game_data["display"]["prompt"] + " "), player_data, game_data)
-
-    return not player_data.get("quitting")
+def game_loop(model):
+    view(model)
+    return update(player_input(model), model)
 
 with open("python-adventure.game") as game_file:
-    game_data = json.load(game_file)
-    player_data = {}
-    while game_loop(player_data, game_data): pass
+    model = initialize(json.load(game_file))
+    while not model["game"].get("quitting"):
+        model = game_loop(model)
