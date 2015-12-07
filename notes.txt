@@ -1,6 +1,5 @@
 finish making this game have a pure Elm architecture
 
-
 bug: "I don't know what you're saying" message doesn't always come up
 
 blog about architecture change
