@@ -57,7 +57,6 @@ def replace_string_placeholders(model, string):
             model,
             re.sub(
                 matches.group(0),
-                #TODO should not just be in top-level
                 model["game_data"][default] if default in model["game_data"] else default,
                 string))
     else:
@@ -106,7 +105,6 @@ def filter_choices(model, choices):
 
 def update(player_input, model):
     if player_input == "q":
-        print "\n" + model["game_data"]["messages"]["quit"]
         model["game"]["quitting"] = True
     else:
         model["game"]["last_choice_was_valid"] = False
@@ -127,15 +125,20 @@ def update(player_input, model):
 def view(model):
     os.system("clear")
 
-    print "\n" + process_string(model, model["game"]["current_room"]["description"]) + "\n"
+    if model.get("game").get("quitting"):
+        print "\n" + model["game_data"]["messages"]["quit"]
+    else:
+        print "\n" + process_string(model, model["game"]["current_room"]["description"]) + "\n"
 
-    for choice in filter_choices(model, model["game"]["current_room"]["choices"]):
-        print choice["input"] + ") " + process_string(model, choice["description"])
+        for choice in filter_choices(model, model["game"]["current_room"]["choices"]):
+            print choice["input"] + ") " + process_string(model, choice["description"])
 
-    print "q) quit game\n"
+        #TODO maybe this shouldn't be here, maybe the game should check the json for validity
+        #     One test being that there is always a quit option
+        print "q) quit game\n"
 
-    if model["game"].get("last_choice_was_valid"):
-        print model["game_data"]["messages"]["invalid_choice"]
+        if not model["game"].get("last_choice_was_valid"):
+            print model["game_data"]["messages"]["invalid_choice"]
 
 def player_input(model):
     return raw_input(model["game_data"]["messages"]["prompt"] + " ")
