@@ -1,9 +1,3 @@
-use an immutable data library
-    top one looks coolest
-    https://github.com/tobgu/pyrsistent
-    https://pythonhosted.org/pysistence/
-    https://www.theguardian.com/info/developer-blog/2014/oct/21/immutable-data-structures-in-python
-
 use tail-caller for main game loop and other recursively called functions
     http://kylem.net/programming/tailcall.html
     http://code.activestate.com/recipes/474088-tail-call-optimization-decorator/

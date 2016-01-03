@@ -113,9 +113,9 @@ def update(player_input, model):
         #TODO filter_choices takes only model as argument? seems like it should be less
         for choice in filter_choices(model, model["game"]["current_room"]["choices"]):
             if player_input == choice["input"]:
+                model["game"]["last_choice_was_valid"] = True
                 if "action" in choice and choice["action"]["name"] in actions:
-                    model["game"]["last_choice_was_valid"] = True
-                    #TODO there should be separate action functions for modification, and display
+                    #TODO Should be in view functions
                     os.system("clear")
                     actions[choice["action"]["name"]](
                         model,
@@ -138,6 +138,7 @@ def view(model):
         #     One test being that there is always a quit option
         print "q) quit game\n"
 
+        pp.pprint(model["game"].get("last_choice_was_valid"))
         if not model["game"].get("last_choice_was_valid"):
             print model["game_data"]["messages"]["invalid_choice"]
 
@@ -149,7 +150,8 @@ def initialize(game_data):
     return {
         "game_data": game_data,
         "game": {
-            "current_room": scenes[scenes["first scene name"]]
+            "current_room": scenes[scenes["first scene name"]],
+            "last_choice_was_valid": True
         }
     }
 
