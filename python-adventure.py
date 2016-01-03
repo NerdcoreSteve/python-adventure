@@ -11,6 +11,7 @@ pp = pprint.PrettyPrinter(indent=4)
 #TODO actions should be a dict of dicts, each sub_dict has view and update functions
 #     maybe update looks to see what state it's in and calls the appropriate update function.
 #     same for view
+#     this is a lot like the enum thing in Elm.
 ###Actions
 def name_entity(model, options):
     #TODO should not be top level?
@@ -57,7 +58,7 @@ def replace_string_placeholders(model, string):
             model,
             re.sub(
                 matches.group(0),
-                model["game_data"][default] if default in model["game_data"] else default,
+                model["game"][default] if default in model["game"] else default,
                 string))
     else:
         return string
